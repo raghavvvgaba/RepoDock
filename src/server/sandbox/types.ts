@@ -79,6 +79,26 @@ export type SandboxDiffInput = {
   sessionId: string;
 };
 
+export type SandboxChangeStatus =
+  | "added"
+  | "conflicted"
+  | "deleted"
+  | "modified"
+  | "renamed"
+  | "untracked";
+
+export type SandboxChangedFile = {
+  path: string;
+  previousPath?: string;
+  status: SandboxChangeStatus;
+};
+
+export type SandboxChangesSnapshot = {
+  diff: string;
+  files: SandboxChangedFile[];
+  truncated: boolean;
+};
+
 export type SandboxFile = {
   content: string;
   endLine: number;
@@ -175,8 +195,8 @@ export type SandboxAgentStatus =
   | "failed";
 
 export type SandboxAgentInput = {
-  issueNumber: number;
-  issueTitle: string;
+  issueNumber?: number;
+  issueTitle?: string;
   projectId: string;
   repoName: string;
   repoOwner: string;

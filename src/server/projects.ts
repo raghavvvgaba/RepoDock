@@ -19,6 +19,10 @@ import {
   fetchImportRepositories,
 } from "~/server/github/repos";
 import { readGithubImportSession } from "~/server/github/import-session";
+import {
+  getOrCreateProjectWorkspace,
+  getWorkspaceMessages,
+} from "~/server/workspace-chat";
 
 const githubOnboardingMilestones = [
   "Authorize the GitHub App on your user account",
@@ -136,7 +140,7 @@ export async function getGithubOnboardingPageData(
 }
 
 
-export async function getProjectPageData(userId: string, projectId: string) {
+export async function getProjectIssuesPageData(userId: string, projectId: string) {
   const project = await getOwnedProject(projectId, userId);
 
   if (!project) {
@@ -150,6 +154,29 @@ export async function getProjectPageData(userId: string, projectId: string) {
 
   return {
     issuesResult,
+    notFound: false as const,
+    project,
+  };
+}
+
+export async function getProjectWorkspacePageData(
+  userId: string,
+  projectId: string,
+) {
+  const project = await getOwnedProject(projectId, userId);
+
+  if (!project) {
+    return { notFound: true as const };
+  }
+
+  const workspace = await getOrCreateProjectWorkspace({
+    projectId: project.id,
+    userId,
+  });
+  const messages: AIChatMessage[] = await getWorkspaceMessages(workspace.id);
+
+  return {
+    messages,
     notFound: false as const,
     project,
   };

@@ -33,6 +33,8 @@ Relations:
   Issue chat sessions owned by this user.
 - `sandboxSessions`
   Project sandbox sessions owned by this user.
+- `projectWorkspaces`
+  Persistent repository workspaces owned by this user.
 
 ### `Project`
 
@@ -60,6 +62,37 @@ Relations:
   Persistent issue chat sessions for this project.
 - `sandboxSessions`
   Sandbox registry rows for this project.
+- `workspace`
+  The project's optional one-to-one persistent coding workspace.
+
+### `ProjectWorkspace`
+
+Represents the durable agent workspace for one imported repository.
+
+Important fields:
+
+- `projectId`
+  Unique project relation. This enforces one workspace per imported repository.
+- `userId`
+  Owner used for direct server-side ownership checks.
+
+Relations:
+
+- `messages`
+  The durable free-form conversation for the project workspace.
+
+The row is created with new projects and lazily upserted for projects imported before this model existed.
+
+### `WorkspaceMessage`
+
+Represents one durable user, assistant, or system message in a project workspace.
+
+Index:
+
+- `@@index([workspaceId, createdAt])`
+  Supports loading a workspace conversation in chronological order.
+
+Workspace messages are separate from inherited issue messages so the new project workflow does not require fake or sentinel issue numbers.
 
 ### `ChatSession`
 

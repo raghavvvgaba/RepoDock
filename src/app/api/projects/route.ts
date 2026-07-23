@@ -100,6 +100,11 @@ export async function POST(request: Request) {
         repoName: matchedRepo.name,
         repoOwner: matchedRepo.owner,
         userId,
+        workspace: {
+          create: {
+            userId,
+          },
+        },
       },
     });
 

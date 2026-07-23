@@ -69,6 +69,7 @@ type IssueSandboxStatusPanelProps = {
   checkPreviewAction: string;
   heartbeatAction: string;
   onPreviewUrlChange?: (previewUrl: string | null) => void;
+  onSessionIdChange?: (sessionId: string | null) => void;
   projectId: string;
   restartPreviewAction: string;
   sessionAction: string;
@@ -143,13 +144,14 @@ export function IssueSandboxStatusPanel({
   checkPreviewAction,
   heartbeatAction,
   onPreviewUrlChange,
+  onSessionIdChange,
   projectId,
   restartPreviewAction,
   sessionAction,
   startAction,
   stopAction,
 }: IssueSandboxStatusPanelProps) {
-  const storageKey = useMemo(() => `devin:sandbox:${projectId}`, [projectId]);
+  const storageKey = useMemo(() => `repodock:sandbox:${projectId}`, [projectId]);
   const [session, setSession] = useState<SandboxSession | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isStarting, setIsStarting] = useState(false);
@@ -166,7 +168,7 @@ export function IssueSandboxStatusPanel({
       ? session.message ?? session.startupMessage
       : session?.previewMessage ?? session?.startupMessage ?? session?.message;
   const displayMessage =
-    statusMessage ?? "Start a preview environment for this issue.";
+    statusMessage ?? "Start the cloud workspace for this repository.";
 
   // Notify parent when preview URL availability changes
   useEffect(() => {
@@ -174,6 +176,12 @@ export function IssueSandboxStatusPanel({
       onPreviewUrlChange(canOpenPreview && session?.previewUrl ? session.previewUrl : null);
     }
   }, [canOpenPreview, session?.previewUrl, onPreviewUrlChange]);
+
+  useEffect(() => {
+    onSessionIdChange?.(
+      session?.status === "running" ? session.sessionId : null,
+    );
+  }, [onSessionIdChange, session]);
 
   const saveSession = useCallback(
     (nextSession: SandboxSession) => {

@@ -4,14 +4,16 @@ This file explains the high-level structure of the app.
 
 ## Product Shape
 
-Devin is a repository-to-issue workflow app:
+RepoDock's primary flow is now repository-to-workspace:
 
 1. A user signs in.
 2. The user connects GitHub.
 3. The user imports a repository as a project.
-4. The app loads that repository's issues.
-5. The user starts a project sandbox.
-6. The user opens an issue workspace and reuses that same sandbox for edits and inspection.
+4. The app opens one persistent project workspace and conversation.
+5. The user starts or reconnects to the project's E2B sandbox.
+6. The user gives the agent a free-form task and reviews streamed activity, changed files, and the Git diff.
+
+GitHub issues remain available as a secondary workflow and reuse the same project sandbox.
 
 ## Frontend Structure
 
@@ -29,7 +31,9 @@ Important screens:
 - [src/app/(app)/projects/new/page.tsx](../src/app/%28app%29/projects/new/page.tsx)
   Repository import flow.
 - [src/app/(app)/projects/[id]/page.tsx](../src/app/%28app%29/projects/%5Bid%5D/page.tsx)
-  Project view with issue list and sandbox panel.
+  Primary project workspace with agent chat, sandbox controls, and change review.
+- [src/app/(app)/projects/[id]/issues/page.tsx](../src/app/%28app%29/projects/%5Bid%5D/issues/page.tsx)
+  Secondary GitHub issue browser.
 - [src/app/(app)/projects/[id]/issues/[issueNumber]/page.tsx](../src/app/%28app%29/projects/%5Bid%5D/issues/%5BissueNumber%5D/page.tsx)
   Issue workspace with shared sandbox and persistent issue chat.
 
@@ -46,7 +50,7 @@ Main route groups:
 - [src/app/api/projects/route.ts](../src/app/api/projects/route.ts)
   Project listing and import creation.
 - [src/app/api/projects/[id]/sandbox](../src/app/api/projects/%5Bid%5D/sandbox)
-  Project-level sandbox lifecycle routes.
+  Project-level sandbox lifecycle, free-form agent, preview check, and Git changes routes.
 - [src/app/api/projects/[id]/issues/[issueNumber]/sandbox](../src/app/api/projects/%5Bid%5D/issues/%5BissueNumber%5D/sandbox)
   Issue workspace routes for edit, diff, files, commands, and the issue-shaped sandbox lifecycle endpoints.
 
@@ -62,6 +66,8 @@ Important backend modules:
   Sandbox provider contract, route helpers, registry logic, access checks, and AI edit integration.
 - [src/server/chat.ts](../src/server/chat.ts)
   Persistent issue chat sessions and messages.
+- [src/server/workspace-chat.ts](../src/server/workspace-chat.ts)
+  Persistent project workspace conversation and messages.
 - [src/server/ai](../src/server/ai)
   AI provider abstraction and single-file edit generation.
 
@@ -104,7 +110,14 @@ If the live in-memory session disappears, the app can restore from the durable P
 
 ## Chat Persistence
 
-Issue chat persistence uses:
+The primary project workspace uses:
+
+- `ProjectWorkspace`
+- `WorkspaceMessage`
+
+Each project has at most one workspace row. Messages persist the free-form project conversation independently of GitHub issues.
+
+The inherited issue workspace continues to use:
 
 - `ChatSession`
 - `ChatMessage`

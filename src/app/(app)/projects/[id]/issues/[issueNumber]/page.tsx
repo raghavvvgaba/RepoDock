@@ -58,7 +58,7 @@ export default async function ProjectIssuePage({
               variant="ghost"
               className="h-8 px-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground"
             >
-              <Link href={`/projects/${project.id}`}>
+              <Link href={`/projects/${project.id}/issues`}>
                 <ChevronLeft className="mr-1 h-3.5 w-3.5" />
                 Back
               </Link>

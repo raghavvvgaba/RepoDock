@@ -14,6 +14,7 @@ import {
   shouldShowModelProgressText,
   type SandboxAgentProgressHandler,
 } from "~/server/sandbox/agent-progress";
+import { buildAgentUserPrompt } from "~/server/sandbox/agent-context";
 import {
   buildSandboxAgentModelTools,
 } from "~/server/sandbox/tools/model-tools";
@@ -233,22 +234,6 @@ function buildMultiToolRetryPrompt() {
   return formatPromptTemplate(AGENT_MULTITOOL_RETRY_PROMPT_TEMPLATE, {
     MAX_READ_ONLY_TOOL_CALLS: String(MAX_READ_ONLY_TOOL_CALLS),
   });
-}
-
-function buildAgentUserPrompt(input: SandboxAgentInput) {
-  return [
-    `Repository: ${input.repoOwner}/${input.repoName}`,
-    `Project id: ${input.projectId}`,
-    `Issue #${input.issueNumber}: ${input.issueTitle}`,
-    "",
-    "User instruction:",
-    input.userInstruction,
-    "",
-    "When you are done or blocked, return JSON with:",
-    '- "status": "completed" or "blocked"',
-    '- "message": short user-facing explanation',
-    '- "clarificationQuestion": optional follow-up question when blocked',
-  ].join("\n");
 }
 
 function formatSearchResult(result: SandboxSearchResult) {
@@ -1035,7 +1020,9 @@ export async function runSandboxAgent(
 ): Promise<SandboxAgentInternalResult> {
   console.log("Sandbox agent started:", {
     instructionPreview: previewText(input.userInstruction, 240),
-    issueNumber: input.issueNumber,
+    ...(typeof input.issueNumber === "number"
+      ? { issueNumber: input.issueNumber }
+      : {}),
     projectId: input.projectId,
     repoName: input.repoName,
     repoOwner: input.repoOwner,

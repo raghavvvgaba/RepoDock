@@ -1,24 +1,27 @@
-# Devin
+# RepoDock
 
-Devin is a Next.js app for importing a GitHub repository, browsing its issues, and working on those issues inside a live E2B sandbox with AI-assisted edit flows.
+RepoDock is a developer-first cloud coding workspace built on the inherited repository import, GitHub issue, E2B sandbox, and AI-assisted edit flows.
 
 ## What It Does
 
 - Connects a user account to GitHub
 - Imports a repository into the app as a project
-- Lists GitHub issues for that project
-- Starts one shared sandbox per project
-- Lets users inspect files, run commands, view diffs, and prepare AI-assisted edits
-- Persists issue chat history in Postgres through Prisma
+- Opens each imported repository as a persistent agent coding workspace
+- Starts or reconnects one shared E2B sandbox per project
+- Streams free-form agent work without requiring a GitHub issue
+- Shows changed files, inspectable diffs, sandbox logs, and external previews
+- Persists project workspace conversations in Postgres through Prisma
+- Keeps GitHub issues available as an optional secondary workflow
 
 ## Main Flow
 
 1. Sign in with Clerk.
 2. Connect GitHub.
 3. Import a repository on `/projects/new`.
-4. Open `/projects/[id]` to browse issues and manage the sandbox.
-5. Open `/projects/[id]/issues/[issueNumber]` to work on a specific issue.
-6. Reuse the same project sandbox for file operations, commands, diffs, and AI edit preparation.
+4. Open `/projects/[id]` to enter the repository workspace.
+5. Start or reconnect to the project sandbox and give the agent a free-form task.
+6. Review streamed activity, changed files, the Git diff, and the external preview.
+7. Optionally browse GitHub issues at `/projects/[id]/issues`.
 
 ## Stack
 
