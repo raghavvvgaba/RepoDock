@@ -33,7 +33,7 @@ export function AppShell({
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2 text-primary">
             <h1 className="text-sm font-bold tracking-widest uppercase">
-              Devin
+              RepoDock
             </h1>
           </div>
           <Separator orientation="vertical" className="h-6 bg-border/60" />

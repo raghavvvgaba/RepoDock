@@ -38,7 +38,7 @@ async function githubFetch<T>(path: string, accessToken: string) {
     headers: {
       Accept: "application/vnd.github+json",
       Authorization: `Bearer ${accessToken}`,
-      "User-Agent": "devin-app",
+      "User-Agent": "repodock-app",
       "X-GitHub-Api-Version": GITHUB_API_VERSION,
     },
   });

@@ -1,2 +1,1 @@
-export const sandboxSessionUpdatedEvent = "devin:sandbox-session-updated";
-
+export const sandboxSessionUpdatedEvent = "repodock:sandbox-session-updated";

@@ -53,7 +53,7 @@ export function ChatInputBox({
             onPrepareEdit();
           }
         }}
-        placeholder="Describe what you want Devin to change in the sandbox."
+        placeholder="Describe what you want RepoDock to change in the sandbox."
         value={instruction}
         required
       />

@@ -52,7 +52,7 @@ async function githubAppFetch<T>(path: string, init?: RequestInit) {
     headers: {
       Accept: "application/vnd.github+json",
       Authorization: `Bearer ${createGithubAppJwt()}`,
-      "User-Agent": "devin-app",
+      "User-Agent": "repodock-app",
       "X-GitHub-Api-Version": GITHUB_API_VERSION,
       ...(init?.headers ?? {}),
     },

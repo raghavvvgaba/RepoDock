@@ -21,10 +21,10 @@ export default function HomePage() {
   const accordionItems = [
     {
       title: "Connect your repository",
-      description: "Import any GitHub repository in one click. Devin creates a secure, isolated sandbox for each project, shared with everyone in your organization."
+      description: "Import any GitHub repository in one click. RepoDock creates a secure, isolated sandbox for each project, shared with everyone in your organization."
     },
     {
-      title: "Talk to Devin",
+      title: "Talk to RepoDock",
       description: "Describe what you want to change in plain English. Our AI analyzes the codebase and implements exact edits across multiple files simultaneously."
     },
     {
@@ -33,7 +33,7 @@ export default function HomePage() {
     },
     {
       title: "Push to GitHub",
-      description: "When you are happy with the preview, hit commit. Devin creates a clean, formatted Pull Request ready for engineering review."
+      description: "When you are happy with the preview, hit commit. RepoDock creates a clean, formatted Pull Request ready for engineering review."
     }
   ];
 
@@ -49,7 +49,7 @@ export default function HomePage() {
                   <Terminal className="h-5 w-5" />
                 </div>
                 <span className="text-lg font-bold tracking-widest uppercase text-primary">
-                  Devin
+                  RepoDock
                 </span>
               </Link>
               
@@ -196,7 +196,7 @@ export default function HomePage() {
                 <div className="flex flex-col items-start justify-start gap-4">
                   <h2 className="text-3xl sm:text-4xl font-semibold text-foreground tracking-tight">The solution</h2>
                   <p className="text-lg text-muted-foreground sm:text-xl">
-                    Devin gives your whole team the power to build without the risk. Safe sandboxes, real-time previews, and structured pull requests.
+                    RepoDock gives your whole team the power to build without the risk. Safe sandboxes, real-time previews, and structured pull requests.
                   </p>
                 </div>
                 
@@ -370,7 +370,7 @@ export default function HomePage() {
                 <div className="flex items-center gap-2">
                   <Terminal className="h-5 w-5 text-muted-foreground" />
                   <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
-                    © {new Date().getFullYear()} Devin Engineering
+                    © {new Date().getFullYear()} RepoDock Engineering
                   </p>
                 </div>
                 <div className="flex gap-8">

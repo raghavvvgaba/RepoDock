@@ -1,4 +1,4 @@
-# Devin E2B Template
+# RepoDock E2B Template
 
 This folder defines the E2B sandbox template used to provide runtime tools that
 the app expects inside issue workspaces.

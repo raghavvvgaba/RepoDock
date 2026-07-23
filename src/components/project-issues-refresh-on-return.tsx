@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export function getProjectIssuesRefreshKey(projectId: string) {
-  return `devin:project:${projectId}:issues-refresh-needed`;
+  return `repodock:project:${projectId}:issues-refresh-needed`;
 }
 
 export function ProjectIssuesRefreshOnReturn({

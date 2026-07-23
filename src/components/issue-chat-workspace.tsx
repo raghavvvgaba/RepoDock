@@ -123,7 +123,7 @@ export function IssueChatWorkspace({
   const { setIsOpen } = useSidebar();
 
   const storageKey = useMemo(
-    () => `devin:sandbox:${projectId}`,
+    () => `repodock:sandbox:${projectId}`,
     [projectId],
   );
   const hasVisibleMessages = messages.some((message) => !message.isThinking);
@@ -289,7 +289,7 @@ export function IssueChatWorkspace({
     }
 
     if (!sessionId) {
-      toast.error("Start the sandbox first so Devin has a live workspace to edit.");
+      toast.error("Start the sandbox first so RepoDock has a live workspace to edit.");
       return;
     }
 
@@ -370,7 +370,7 @@ export function IssueChatWorkspace({
     }
 
     if (!sessionId) {
-      toast.error("Start the sandbox first so Devin has a live workspace to edit.");
+      toast.error("Start the sandbox first so RepoDock has a live workspace to edit.");
       return;
     }
 

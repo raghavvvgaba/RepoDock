@@ -55,7 +55,7 @@ async function exchangeGithubCodeForAccessToken(code: string, codeVerifier: stri
     method: "POST",
     headers: {
       Accept: "application/json",
-      "User-Agent": "devin-app",
+      "User-Agent": "repodock-app",
     },
     cache: "no-store",
   });
@@ -140,7 +140,7 @@ async function completeGithubOauth(code: string, state: string) {
     headers: {
       Accept: "application/vnd.github+json",
       Authorization: `Bearer ${accessToken}`,
-      "User-Agent": "devin-app",
+      "User-Agent": "repodock-app",
       "X-GitHub-Api-Version": GITHUB_API_VERSION,
     },
     cache: "no-store",

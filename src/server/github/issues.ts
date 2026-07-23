@@ -79,7 +79,7 @@ export async function fetchProjectOpenIssues(
           headers: {
             Accept: "application/vnd.github+json",
             Authorization: `Bearer ${installationToken}`,
-            "User-Agent": "devin-app",
+            "User-Agent": "repodock-app",
             "X-GitHub-Api-Version": GITHUB_API_VERSION,
           },
         },
@@ -153,7 +153,7 @@ export async function fetchProjectIssue(
           headers: {
             Accept: "application/vnd.github+json",
             Authorization: `Bearer ${installationToken}`,
-            "User-Agent": "devin-app",
+            "User-Agent": "repodock-app",
             "X-GitHub-Api-Version": GITHUB_API_VERSION,
           },
         },
@@ -242,7 +242,7 @@ export async function createProjectIssue(input: {
         Accept: "application/vnd.github+json",
         Authorization: `Bearer ${input.installationToken}`,
         "Content-Type": "application/json",
-        "User-Agent": "devin-app",
+        "User-Agent": "repodock-app",
         "X-GitHub-Api-Version": GITHUB_API_VERSION,
       },
       method: "POST",

@@ -8,7 +8,7 @@ import { TooltipProvider } from "~/components/ui/tooltip";
 import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
-  title: "Devin",
+  title: "RepoDock",
   description: "A simple GitHub contribution layer for non-technical users.",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };

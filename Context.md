@@ -1,4 +1,6 @@
-# Devin - Project Context
+# Legacy Devin Project Context
+
+> Historical context for the application RepoDock inherited. When this document conflicts with `specs/01-product-boundary.md`, the product-boundary specification takes precedence.
 
 ## What We're Building
 

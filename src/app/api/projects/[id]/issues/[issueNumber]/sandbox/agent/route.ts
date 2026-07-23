@@ -145,7 +145,7 @@ export async function POST(
   const instruction = readStringField(body, "instruction");
 
   if (!sessionId) {
-    return jsonFailure("Start the sandbox first so Devin has a live workspace.", 400);
+    return jsonFailure("Start the sandbox first so RepoDock has a live workspace.", 400);
   }
 
   if (
