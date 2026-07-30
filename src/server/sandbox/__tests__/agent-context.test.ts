@@ -19,7 +19,7 @@ describe("buildAgentUserPrompt", () => {
     expect(prompt).not.toContain("Issue #");
   });
 
-  it("preserves issue context for the inherited issue workspace", () => {
+  it("preserves optional issue context for issue-scoped runs", () => {
     const prompt = buildAgentUserPrompt({
       ...baseInput,
       issueNumber: 42,

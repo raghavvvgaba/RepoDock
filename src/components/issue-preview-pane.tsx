@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-import { IssueSandboxStatusPanel } from "~/components/issue-sandbox-status-panel";
+import { SandboxStatusPanel } from "~/components/sandbox-status-panel";
 import { Button } from "~/components/ui/button";
 import { cn } from "~/lib/utils";
 
@@ -61,7 +61,7 @@ export function IssuePreviewPane({
     <div className="flex min-w-0 flex-1 flex-col bg-muted/20">
       {/* Status Panel Header */}
       <header className="flex h-14 shrink-0 items-center border-b border-border bg-background px-4">
-        <IssueSandboxStatusPanel
+        <SandboxStatusPanel
           checkPreviewAction={checkPreviewAction}
           heartbeatAction={heartbeatAction}
           onPreviewUrlChange={handlePreviewUrlChange}

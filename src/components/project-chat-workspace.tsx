@@ -16,24 +16,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "~/components/ui/dialog";
-import { parseSseFrames } from "~/lib/sse";
-
-type AgentResponse =
-  | {
-      clarificationQuestion?: string;
-      message: string;
-      messages?: AIChatMessage[];
-      status: "blocked" | "completed";
-    }
-  | {
-      message?: string;
-      status: "failed";
-    };
-
-type AgentStreamEvent =
-  | { message: string; type: "progress" }
-  | { result: AgentResponse; type: "final" }
-  | { message: string; type: "error" };
+import {
+  appendAgentWorkingUpdate,
+  buildAgentFallbackMessage,
+  buildAgentWorkingMessage,
+  readAgentResponse,
+  removeAgentWorkingMessage,
+} from "~/lib/agent-chat";
 
 type ProjectChatWorkspaceProps = {
   agentAction: string;
@@ -43,22 +32,7 @@ type ProjectChatWorkspaceProps = {
   sessionId: string | null;
 };
 
-const MAX_WORKING_UPDATES = 5;
 const workingMessageId = "project-working-message";
-
-function buildWorkingMessage(updates: string[]): AIChatMessage {
-  return {
-    body: updates.join("\n"),
-    id: workingMessageId,
-    isThinking: true,
-    role: "assistant",
-    tone: "default",
-  };
-}
-
-function removeWorkingMessage(messages: AIChatMessage[]) {
-  return messages.filter((message) => message.id !== workingMessageId);
-}
 
 export function ProjectChatWorkspace({
   agentAction,
@@ -73,60 +47,6 @@ export function ProjectChatWorkspace({
   const [isClearing, setIsClearing] = useState(false);
   const [isClearDialogOpen, setIsClearDialogOpen] = useState(false);
   const hasMessages = messages.some((message) => !message.isThinking);
-
-  function pushWorkingUpdate(message: string) {
-    const trimmedMessage = message.trim();
-    if (!trimmedMessage) return;
-
-    setMessages((current) => {
-      const existing = current.find((item) => item.id === workingMessageId);
-      const existingUpdates = existing?.body
-        ? existing.body.split("\n").filter(Boolean)
-        : [];
-      const nextWorkingMessage = buildWorkingMessage(
-        [...existingUpdates, trimmedMessage].slice(-MAX_WORKING_UPDATES),
-      );
-
-      return existing
-        ? current.map((item) =>
-            item.id === workingMessageId ? nextWorkingMessage : item,
-          )
-        : [...current, nextWorkingMessage];
-    });
-  }
-
-  async function readAgentStream(response: Response): Promise<AgentResponse> {
-    if (!response.body) {
-      throw new Error("The sandbox agent did not return a stream.");
-    }
-
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder();
-    let buffer = "";
-
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-
-      buffer += decoder.decode(value, { stream: true });
-      const parsed = parseSseFrames(buffer);
-      buffer = parsed.remaining;
-
-      for (const event of parsed.events) {
-        const parsedEvent = JSON.parse(event.data) as AgentStreamEvent;
-
-        if (parsedEvent.type === "progress") {
-          pushWorkingUpdate(parsedEvent.message);
-        } else if (parsedEvent.type === "final") {
-          return parsedEvent.result;
-        } else {
-          return { message: parsedEvent.message, status: "failed" };
-        }
-      }
-    }
-
-    throw new Error("The sandbox agent stream ended before a final response.");
-  }
 
   async function handleRunAgent() {
     const trimmedInstruction = instruction.trim();
@@ -143,7 +63,7 @@ export function ProjectChatWorkspace({
     setMessages((current) => [
       ...current,
       userMessage,
-      buildWorkingMessage(["Starting workspace run..."]),
+      buildAgentWorkingMessage(workingMessageId, ["Starting workspace run..."]),
     ]);
 
     try {
@@ -155,14 +75,15 @@ export function ProjectChatWorkspace({
         },
         method: "POST",
       });
-      const contentType = response.headers.get("Content-Type") ?? "";
-      const result = contentType.includes("text/event-stream")
-        ? await readAgentStream(response)
-        : ((await response.json()) as AgentResponse);
+      const result = await readAgentResponse(response, (message) => {
+        setMessages((current) =>
+          appendAgentWorkingUpdate(current, workingMessageId, message),
+        );
+      });
 
       if (!response.ok || result.status === "failed") {
         setMessages((current) => [
-          ...removeWorkingMessage(current),
+          ...removeAgentWorkingMessage(current, workingMessageId),
           {
             body:
               result.message ??
@@ -176,27 +97,25 @@ export function ProjectChatWorkspace({
       }
 
       setInstruction("");
-      const fallbackAssistant: AIChatMessage = {
-        body: result.clarificationQuestion
-          ? `${result.message}\n\nClarification needed: ${result.clarificationQuestion}`
-          : result.message,
-        id: `workspace-assistant-${Date.now()}`,
-        role: "assistant",
-        tone: result.status === "completed" ? "success" : "warning",
-      };
       const nextMessages = result.messages?.length
         ? result.messages
-        : [userMessage, fallbackAssistant];
+        : [
+            userMessage,
+            buildAgentFallbackMessage(
+              result,
+              `workspace-assistant-${Date.now()}`,
+            ),
+          ];
 
       setMessages((current) => [
-        ...removeWorkingMessage(current).filter(
+        ...removeAgentWorkingMessage(current, workingMessageId).filter(
           (message) => message.id !== userMessage.id,
         ),
         ...nextMessages,
       ]);
     } catch {
       setMessages((current) => [
-        ...removeWorkingMessage(current),
+        ...removeAgentWorkingMessage(current, workingMessageId),
         {
           body: "The sandbox agent could not finish this request. The workspace is still intact.",
           id: `workspace-error-${Date.now()}`,

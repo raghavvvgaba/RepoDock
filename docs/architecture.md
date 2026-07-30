@@ -117,7 +117,7 @@ The primary project workspace uses:
 
 Each project has at most one workspace row. Messages persist the free-form project conversation independently of GitHub issues.
 
-The inherited issue workspace continues to use:
+The optional issue workspace continues to use:
 
 - `ChatSession`
 - `ChatMessage`

@@ -1,6 +1,6 @@
 # RepoDock
 
-RepoDock is a developer-first cloud coding workspace built on the inherited repository import, GitHub issue, E2B sandbox, and AI-assisted edit flows.
+RepoDock is a developer-first cloud coding workspace where engineers and a coding agent work against the same visible repository and E2B environment.
 
 ## What It Does
 
@@ -92,7 +92,7 @@ Install dependencies:
 pnpm install
 ```
 
-Run the app locally:
+Run the app locally at [http://localhost:4000](http://localhost:4000):
 
 ```bash
 pnpm dev

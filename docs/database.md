@@ -92,7 +92,7 @@ Index:
 - `@@index([workspaceId, createdAt])`
   Supports loading a workspace conversation in chronological order.
 
-Workspace messages are separate from inherited issue messages so the new project workflow does not require fake or sentinel issue numbers.
+Workspace messages are separate from optional issue messages so the primary project workflow does not require fake or sentinel issue numbers.
 
 ### `ChatSession`
 
