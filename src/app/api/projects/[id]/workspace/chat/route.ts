@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { getAuth } from "~/server/auth/session";
+import { getCurrentAuth } from "~/server/auth/session";
 import { getOwnedProject } from "~/server/projects";
 import { clearWorkspaceMessages } from "~/server/workspace-chat";
 
@@ -9,11 +9,11 @@ type RouteParams = {
 };
 
 export async function DELETE(_request: Request, { params }: RouteParams) {
-  const { userId } = await getAuth();
-
-  if (!userId) {
+  const currentAuth = await getCurrentAuth();
+  if (!currentAuth) {
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
+  const { userId } = currentAuth;
 
   const { id } = await params;
   const project = await getOwnedProject(id, userId);

@@ -25,7 +25,7 @@ Use the existing stack and established project patterns:
 - React 19
 - Tailwind CSS 4
 - shadcn and Radix UI primitives
-- Clerk for authentication
+- Better Auth with email/password authentication
 - Prisma with PostgreSQL for durable application data
 - GitHub App and OAuth integrations
 - E2B for cloud sandboxes

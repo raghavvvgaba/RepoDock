@@ -1,6 +1,6 @@
 "use server";
 
-import { getAuth } from "~/server/auth/session";
+import { getCurrentAuth } from "~/server/auth/session";
 import { getGithubConnectionStatus } from "~/server/github/connection";
 import { readGithubImportSession } from "~/server/github/import-session";
 import { fetchImportRepositories, fetchGithubViewerLogin } from "~/server/github/repos";
@@ -16,10 +16,11 @@ const newProjectErrorMessages: Record<string, string> = {
 };
 
 export async function fetchImportModalData(owner?: string) {
-  const { userId } = await getAuth();
-  if (!userId) {
+  const currentAuth = await getCurrentAuth();
+  if (!currentAuth) {
     throw new Error("Unauthorized");
   }
+  const { userId } = currentAuth;
 
   const githubStatus = await getGithubConnectionStatus(userId);
   if (!githubStatus.connected) {

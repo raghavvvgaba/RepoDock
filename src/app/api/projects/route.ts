@@ -1,8 +1,8 @@
-import { auth } from "@clerk/nextjs/server";
 import { Prisma } from "../../../../generated/prisma";
 import { NextResponse } from "next/server";
 
-import { ensureUserRecord } from "~/server/auth/sync-user";
+import { getSignInPath } from "~/lib/auth-redirect";
+import { getCurrentAuth } from "~/server/auth/session";
 import { db } from "~/server/db";
 import { getGithubConnectionStatus } from "~/server/github/connection";
 import { readGithubImportSession } from "~/server/github/import-session";
@@ -39,12 +39,14 @@ function toImportSuccess(request: Request, projectId: string) {
   });
 }
 
-export async function GET() {
-  const { userId, redirectToSignIn } = await auth();
-
-  if (!userId) {
-    return redirectToSignIn({ returnBackUrl: "/projects" });
+export async function GET(request: Request) {
+  const currentAuth = await getCurrentAuth();
+  if (!currentAuth) {
+    return NextResponse.redirect(
+      new URL(getSignInPath("/projects"), request.url),
+    );
   }
+  const { userId } = currentAuth;
 
   const projects = await listProjectsForUser(userId);
 
@@ -52,11 +54,18 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const { userId, redirectToSignIn } = await auth();
+  const currentAuth = await getCurrentAuth();
+  if (!currentAuth) {
+    if (wantsJson(request)) {
+      return NextResponse.json({ error: "unauthenticated" }, { status: 401 });
+    }
 
-  if (!userId) {
-    return redirectToSignIn({ returnBackUrl: "/projects?newImport=true" });
+    return NextResponse.redirect(
+      new URL(getSignInPath("/projects?newImport=true"), request.url),
+      { status: 303 },
+    );
   }
+  const { userId } = currentAuth;
 
   const githubStatus = await getGithubConnectionStatus(userId);
 
@@ -94,7 +103,6 @@ export async function POST(request: Request) {
   }
 
   try {
-    await ensureUserRecord(userId);
     const project = await db.project.create({
       data: {
         repoName: matchedRepo.name,

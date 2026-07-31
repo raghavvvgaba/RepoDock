@@ -1,32 +1,24 @@
-"use client";
-
-import { SignIn } from "@clerk/nextjs";
-import { dark } from "@clerk/themes";
-import { useTheme } from "next-themes";
-
+import { AuthForm } from "~/components/auth-form";
 import { AuthShell } from "~/components/auth-shell";
+import { sanitizeAuthCallbackUrl } from "~/lib/auth-redirect";
 
-export default function SignInPage() {
-  const { resolvedTheme } = useTheme();
+type SignInPageProps = {
+  searchParams: Promise<{ callbackURL?: string }>;
+};
+
+export default async function SignInPage({
+  searchParams,
+}: SignInPageProps) {
+  const params = await searchParams;
+  const callbackURL = sanitizeAuthCallbackUrl(params.callbackURL);
 
   return (
     <AuthShell
-      description="Sign in to access your protected workspace and continue toward the GitHub onboarding flow."
-      eyebrow="Authentication"
-      title="Welcome back to RepoDock"
+      description="Sign in to reopen your repository workspaces, sandboxes, and GitHub connection."
+      eyebrow="Authentication / Sign in"
+      title="Continue building"
     >
-      <SignIn
-        appearance={{
-          baseTheme: resolvedTheme === "dark" ? dark : undefined,
-          elements: {
-            card: "shadow-none",
-            rootBox: "w-full",
-          },
-        }}
-        path="/sign-in"
-        routing="path"
-        signUpUrl="/sign-up"
-      />
+      <AuthForm callbackURL={callbackURL} mode="sign-in" />
     </AuthShell>
   );
 }

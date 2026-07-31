@@ -1,23 +1,27 @@
-import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
-import { ensureUserRecord } from "~/server/auth/sync-user";
+import { getSignInPath, sanitizeAuthCallbackUrl } from "~/lib/auth-redirect";
+import { getCurrentAuth } from "~/server/auth/session";
 import { disconnectGithub } from "~/server/github/connection";
 
 export async function POST(request: Request) {
-  const { userId, redirectToSignIn } = await auth();
-
-  if (!userId) {
-    return redirectToSignIn({ returnBackUrl: "/onboarding/github" });
+  const currentAuth = await getCurrentAuth();
+  if (!currentAuth) {
+    return NextResponse.redirect(
+      new URL(getSignInPath("/onboarding/github"), request.url),
+      { status: 303 },
+    );
   }
+  const { userId } = currentAuth;
 
-  await ensureUserRecord(userId);
   await disconnectGithub(userId);
 
   const requestUrl = new URL(request.url);
   const returnTo = requestUrl.searchParams.get("returnTo");
-  const redirectTarget =
-    returnTo && returnTo.startsWith("/") ? returnTo : "/onboarding/github";
+  const redirectTarget = sanitizeAuthCallbackUrl(
+    returnTo,
+    "/onboarding/github",
+  );
 
   return NextResponse.redirect(
     new URL(`${redirectTarget}?success=disconnected`, request.url),

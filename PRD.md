@@ -83,7 +83,7 @@ A user can sign in, connect GitHub, import one repo, append `"hello world"` to a
 ## 6. Tech Stack
 - **Frontend / full-stack framework:** Next.js
 - **Hosting:** Vercel
-- **Auth:** Clerk
+- **Auth:** Better Auth
 - **Database:** Neon Postgres
 - **ORM:** Prisma
 - **GitHub integration:** GitHub App
@@ -98,12 +98,16 @@ This stack was chosen to optimize for:
 - simple deployment
 
 ### Auth decision
-Clerk was chosen over Better Auth and Neon Auth because it is the easiest and most mature option for quickly shipping the MVP.
+Better Auth is self-hosted against the existing Prisma/PostgreSQL database so
+RepoDock can deploy without a separate managed-auth control plane. The current
+scope uses email/password credentials without email verification, password
+recovery, or social login.
 
 ---
 
 ## 7. Data Model
-The MVP uses only **2 tables**.
+The MVP keeps its application data models alongside Better Auth's user,
+session, account, and verification records.
 
 ### `users`
 Represents a user of the application.

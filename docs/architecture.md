@@ -18,7 +18,7 @@ RepoDock's primary flow is now repository-to-workspace:
 Frontend screens live under [src/app](../src/app), especially:
 
 - [src/app/(auth)](../src/app/%28auth%29)
-  Auth screens.
+  RepoDock-native Better Auth email/password screens.
 - [src/app/(app)](../src/app/%28app%29)
   Signed-in product screens.
 
@@ -43,6 +43,8 @@ Backend HTTP handlers live under [src/app/api](../src/app/api).
 
 Main route groups:
 
+- [src/app/api/auth](../src/app/api/auth)
+  Better Auth session and credential endpoints.
 - [src/app/api/github](../src/app/api/github)
   GitHub connect, callback, disconnect, and import-session routes.
 - [src/app/api/projects/route.ts](../src/app/api/projects/route.ts)
@@ -53,6 +55,8 @@ Main route groups:
 
 Important backend modules:
 
+- [src/server/auth](../src/server/auth)
+  Better Auth configuration plus the provider-neutral app session boundary.
 - [src/server/github](../src/server/github)
   GitHub auth, repository import, pull-request, and connection helpers.
 - [src/server/sandbox](../src/server/sandbox)
@@ -61,6 +65,18 @@ Important backend modules:
   Persistent project workspace conversation and messages.
 - [src/server/ai](../src/server/ai)
   AI provider abstraction used by the project-scoped agent.
+
+## Authentication
+
+Better Auth stores users, credential accounts, and sessions in PostgreSQL
+through Prisma. Server components call the app-owned auth helpers under
+`src/server/auth`; route handlers perform the same session check before
+ownership queries. The signed-in app layout redirects unauthenticated page
+requests to `/sign-in`, while JSON and sandbox routes return `401`.
+
+GitHub connection is a separate post-login OAuth flow. Its short-lived import
+token is encrypted with `GITHUB_IMPORT_SESSION_SECRET`, not the authentication
+secret.
 
 ## Sandbox Architecture
 

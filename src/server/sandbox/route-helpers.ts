@@ -1,8 +1,8 @@
 import "server-only";
 
-import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
+import { getCurrentAuth } from "~/server/auth/session";
 import { getOwnedProject } from "~/server/projects";
 import { canAccessProjectSandbox } from "~/server/sandbox/ownership";
 
@@ -42,13 +42,13 @@ export async function getOwnedSandboxProject(
   request: Request,
   context: ProjectSandboxRouteContext,
 ) {
-  const { userId } = await auth();
-
-  if (!userId) {
+  const currentAuth = await getCurrentAuth();
+  if (!currentAuth) {
     return {
       response: sandboxError("unauthenticated", 401),
     };
   }
+  const { userId } = currentAuth;
 
   const { id } = await context.params;
   const project = await getOwnedProject(id, userId);

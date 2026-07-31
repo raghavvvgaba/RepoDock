@@ -1,13 +1,14 @@
-import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
+import { getSignInPath } from "~/lib/auth-redirect";
+import { getCurrentAuth } from "~/server/auth/session";
 import { beginGithubOauth } from "~/server/github/oauth";
 
-export async function GET() {
-  const { userId, redirectToSignIn } = await auth();
-
-  if (!userId) {
-    return redirectToSignIn({ returnBackUrl: "/projects?newImport=true" });
+export async function GET(request: Request) {
+  if (!(await getCurrentAuth())) {
+    return NextResponse.redirect(
+      new URL(getSignInPath("/projects?newImport=true"), request.url),
+    );
   }
 
   const authorizeUrl = await beginGithubOauth("import-session");

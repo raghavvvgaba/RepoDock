@@ -20,6 +20,11 @@ Important fields:
   Primary key. Comes from the auth system.
 - `email`
   Unique user email.
+- `emailVerified`
+  Better Auth verification state. It remains `false` while email verification
+  is outside the current credentials-only scope.
+- `image`
+  Optional account avatar URL.
 - `githubUsername`
   Optional connected GitHub username.
 - `githubConnected`
@@ -27,12 +32,37 @@ Important fields:
 
 Relations:
 
+- `sessions`
+  Persistent Better Auth login sessions.
+- `accounts`
+  Better Auth provider records; email/password hashes live on the credential
+  account rather than the user row.
 - `projects`
   Repositories imported by this user.
 - `sandboxSessions`
   Project sandbox sessions owned by this user.
 - `projectWorkspaces`
   Persistent repository workspaces owned by this user.
+
+### `Session`
+
+Represents one Better Auth login session. The unique token identifies the
+session cookie, `expiresAt` controls validity, and optional IP/user-agent fields
+support session diagnostics. Sessions are indexed by `userId` and deleted with
+their user.
+
+### `Account`
+
+Represents one authentication method attached to a user. The current
+implementation creates credential accounts with a password hash; social
+provider tokens remain optional for future use. Accounts are indexed by
+`userId` and deleted with their user.
+
+### `Verification`
+
+Stores short-lived Better Auth verification values. The table is part of the
+core auth schema even though email verification and password recovery are not
+enabled in the current release.
 
 ### `Project`
 

@@ -106,7 +106,7 @@ export async function getGithubOnboardingPageData(
     : null;
   const successMessage =
     params.success === "connected"
-      ? "GitHub identity successfully mapped to Clerk session."
+      ? "GitHub identity successfully mapped to your RepoDock account."
       : params.success === "disconnected"
         ? "GitHub identity unmapped. Local project records purged."
         : null;

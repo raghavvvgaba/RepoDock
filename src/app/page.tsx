@@ -1,15 +1,16 @@
 "use client";
 
-import { SignedIn, SignedOut } from "@clerk/nextjs";
 import Link from "next/link";
 import { Terminal, ArrowRight, Github, LayoutDashboard, Code, ShieldAlert, GitBranch, Play, ChevronDown, ChevronUp } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useAuthSession } from "~/lib/auth-client";
 
 const ROLES = ["developer", "builder", "creator", "an engineer"];
 
 export default function HomePage() {
   const [roleIndex, setRoleIndex] = useState(0);
   const [activeAccordion, setActiveAccordion] = useState(0);
+  const { isPending: isSessionPending, user } = useAuthSession();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -60,21 +61,9 @@ export default function HomePage() {
               </div>
 
               <div className="flex items-center gap-4">
-                <SignedOut>
-                  <Link
-                    className="text-sm font-medium text-muted-foreground transition hover:text-foreground hidden sm:block"
-                    href="/sign-in"
-                  >
-                    Log in
-                  </Link>
-                  <Link
-                    className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all bg-primary text-primary-foreground shadow-xs hover:bg-primary/90 h-8 rounded-md px-4"
-                    href="/sign-up"
-                  >
-                    Get Started
-                  </Link>
-                </SignedOut>
-                <SignedIn>
+                {isSessionPending ? (
+                  <div className="h-8 w-24 animate-pulse rounded-md bg-muted" />
+                ) : user ? (
                   <Link
                     className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all bg-primary text-primary-foreground shadow-xs hover:bg-primary/90 h-8 rounded-md px-4"
                     href="/projects"
@@ -82,7 +71,22 @@ export default function HomePage() {
                     <LayoutDashboard className="h-4 w-4" />
                     Projects
                   </Link>
-                </SignedIn>
+                ) : (
+                  <>
+                    <Link
+                      className="text-sm font-medium text-muted-foreground transition hover:text-foreground hidden sm:block"
+                      href="/sign-in"
+                    >
+                      Log in
+                    </Link>
+                    <Link
+                      className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all bg-primary text-primary-foreground shadow-xs hover:bg-primary/90 h-8 rounded-md px-4"
+                      href="/sign-up"
+                    >
+                      Get Started
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
           </header>
@@ -115,17 +119,18 @@ export default function HomePage() {
               </div>
               
               <div className="flex w-full flex-col items-center gap-3 sm:w-fit sm:flex-row mt-4">
-                 <SignedOut>
-                    <Link href="/sign-up" className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all bg-primary text-primary-foreground shadow-lg shadow-primary/20 hover:bg-primary/90 h-12 rounded-md px-8 w-full sm:w-auto">
-                      Start contributing
-                    </Link>
-                  </SignedOut>
-                  <SignedIn>
-                    <Link href="/projects" className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all bg-primary text-primary-foreground shadow-lg shadow-primary/20 hover:bg-primary/90 h-12 rounded-md px-8 w-full sm:w-auto">
-                      Go to Projects
-                      <ArrowRight className="h-4 w-4" />
-                    </Link>
-                  </SignedIn>
+                {isSessionPending ? (
+                  <div className="h-12 w-44 animate-pulse rounded-md bg-muted" />
+                ) : user ? (
+                  <Link href="/projects" className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all bg-primary text-primary-foreground shadow-lg shadow-primary/20 hover:bg-primary/90 h-12 rounded-md px-8 w-full sm:w-auto">
+                    Go to Projects
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                ) : (
+                  <Link href="/sign-up" className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all bg-primary text-primary-foreground shadow-lg shadow-primary/20 hover:bg-primary/90 h-12 rounded-md px-8 w-full sm:w-auto">
+                    Start contributing
+                  </Link>
+                )}
               </div>
             </div>
           </section>

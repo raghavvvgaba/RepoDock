@@ -3,7 +3,7 @@ import { Github, CheckCircle2, Circle, ArrowRight, ExternalLink, Unlink } from "
 
 import { AppShell } from "~/components/app-shell";
 import { env } from "~/env";
-import { getAuth } from "~/server/auth/session";
+import { requireCurrentAuth } from "~/server/auth/session";
 import { getGithubOnboardingPageData } from "~/server/projects";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
@@ -20,7 +20,7 @@ type GithubOnboardingPageProps = {
 export default async function GithubOnboardingPage({
   searchParams,
 }: GithubOnboardingPageProps) {
-  const { userId } = await getAuth();
+  const { userId } = await requireCurrentAuth("/onboarding/github");
   const params = await searchParams;
   const { errorMessage, milestones, nextStepMessage, status, successMessage } =
     await getGithubOnboardingPageData(userId!, params);
@@ -54,7 +54,7 @@ export default async function GithubOnboardingPage({
             <CardContent className="pt-6">
               <div className="space-y-6">
                 <p className="text-sm leading-relaxed text-muted-foreground">
-                  This procedure links your authenticated Clerk session to a GitHub identity. 
+                  This procedure links your authenticated RepoDock account to a GitHub identity.
                   Minimal connection metadata is stored locally; GitHub remains the 
                   authoritative source for repository data and access state.
                 </p>

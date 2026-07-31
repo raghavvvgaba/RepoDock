@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 
 import { AppShell } from "~/components/app-shell";
 import { ProjectWorkspace } from "~/components/project-workspace";
-import { getAuth } from "~/server/auth/session";
+import { requireCurrentAuth } from "~/server/auth/session";
 import { getProjectWorkspacePageData } from "~/server/projects";
 
 type ProjectPageProps = {
@@ -10,9 +10,9 @@ type ProjectPageProps = {
 };
 
 export default async function ProjectPage({ params }: ProjectPageProps) {
-  const { userId } = await getAuth();
   const { id } = await params;
-  const workspaceData = await getProjectWorkspacePageData(userId!, id);
+  const { userId } = await requireCurrentAuth(`/projects/${id}`);
+  const workspaceData = await getProjectWorkspacePageData(userId, id);
 
   if (workspaceData.notFound) {
     notFound();

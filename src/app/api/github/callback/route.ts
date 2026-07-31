@@ -1,7 +1,7 @@
-import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
-import { ensureUserRecord } from "~/server/auth/sync-user";
+import { getSignInPath } from "~/lib/auth-redirect";
+import { getCurrentAuth } from "~/server/auth/session";
 import { markGithubConnected } from "~/server/github/connection";
 import { writeGithubImportSession } from "~/server/github/import-session";
 import {
@@ -23,11 +23,13 @@ const knownErrors = new Set([
 ]);
 
 export async function GET(request: Request) {
-  const { userId, redirectToSignIn } = await auth();
-
-  if (!userId) {
-    return redirectToSignIn({ returnBackUrl: "/onboarding/github" });
+  const currentAuth = await getCurrentAuth();
+  if (!currentAuth) {
+    return NextResponse.redirect(
+      new URL(getSignInPath("/onboarding/github"), request.url),
+    );
   }
+  const { userId } = currentAuth;
 
   const url = new URL(request.url);
   const error = url.searchParams.get("error");
@@ -59,7 +61,6 @@ export async function GET(request: Request) {
       );
     }
 
-    await ensureUserRecord(userId);
     const githubUser = await completeGithubConnect(code, state);
 
     await markGithubConnected({

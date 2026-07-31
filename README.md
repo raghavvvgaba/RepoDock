@@ -14,7 +14,7 @@ RepoDock is a developer-first cloud coding workspace where engineers and a codin
 
 ## Main Flow
 
-1. Sign in with Clerk.
+1. Sign in with a RepoDock email/password account powered by Better Auth.
 2. Connect GitHub.
 3. Import a repository on `/projects/new`.
 4. Open `/projects/[id]` to enter the repository workspace.
@@ -25,7 +25,7 @@ RepoDock is a developer-first cloud coding workspace where engineers and a codin
 
 - Next.js App Router
 - React
-- Clerk
+- Better Auth
 - Prisma + PostgreSQL
 - GitHub App / GitHub OAuth
 - E2B sandboxes
@@ -51,7 +51,7 @@ RepoDock is a developer-first cloud coding workspace where engineers and a codin
 - Node.js
 - `pnpm`
 - PostgreSQL database
-- Clerk project credentials
+- Two high-entropy authentication secrets
 - GitHub App credentials
 - E2B API key
 - OpenRouter API key if you want AI edit generation enabled
@@ -63,7 +63,9 @@ The app validates its environment in [src/env.js](src/env.js).
 Server-side variables:
 
 - `DATABASE_URL`
-- `CLERK_SECRET_KEY`
+- `BETTER_AUTH_SECRET`
+- `BETTER_AUTH_URL`
+- `GITHUB_IMPORT_SESSION_SECRET`
 - `GITHUB_APP_ID`
 - `GITHUB_APP_PRIVATE_KEY`
 - `GITHUB_APP_CALLBACK_URL`
@@ -75,12 +77,9 @@ Server-side variables:
 - `E2B_API_KEY`
 - `E2B_SANDBOX_TEMPLATE`
 
-Client-side variables:
-
-- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
-- `NEXT_PUBLIC_CLERK_SIGN_IN_URL`
-- `NEXT_PUBLIC_CLERK_SIGN_UP_URL`
-- `NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL`
+Generate independent auth and GitHub import-session secrets with
+`openssl rand -base64 32`. Better Auth is served from the same origin under
+`/api/auth`, so no public auth key is required.
 
 ## Development
 

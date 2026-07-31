@@ -11,7 +11,7 @@ import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { NewImportModal } from "~/components/new-import-modal";
 import { env } from "~/env";
-import { getAuth } from "~/server/auth/session";
+import { requireCurrentAuth } from "~/server/auth/session";
 import { getProjectsPageData } from "~/server/projects";
 
 type ProjectsPageProps = {
@@ -19,9 +19,9 @@ type ProjectsPageProps = {
 };
 
 export default async function ProjectsPage({ searchParams }: ProjectsPageProps) {
-  const { userId } = await getAuth();
+  const { userId } = await requireCurrentAuth("/projects");
   const params = await searchParams;
-  const { githubStatus, projects } = await getProjectsPageData(userId!);
+  const { githubStatus, projects } = await getProjectsPageData(userId);
   
   const defaultOpen = !!params.newImport || !!params.success || !!params.error;
 

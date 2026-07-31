@@ -1,6 +1,7 @@
 "use client"
 
 import type { ReactNode } from "react";
+import { AccountMenu } from "~/components/account-menu";
 import { Separator } from "~/components/ui/separator";
 import { cn } from "~/lib/utils";
 
@@ -13,10 +14,6 @@ type AppShellProps = {
   fullHeight?: boolean;
 };
 
-import { UserButton } from "@clerk/nextjs";
-import { dark } from "@clerk/themes";
-import { useTheme } from "next-themes";
-
 export function AppShell({
   title,
   description,
@@ -25,8 +22,6 @@ export function AppShell({
   children,
   fullHeight = false,
 }: AppShellProps) {
-  const { resolvedTheme } = useTheme();
-
   return (
     <div className="flex h-screen w-full flex-col bg-background overflow-hidden">
       <header className="flex h-14 shrink-0 items-center justify-between border-b border-border px-4 transition-[width,height] ease-linear">
@@ -42,15 +37,7 @@ export function AppShell({
           </h2>
         </div>
         <div className="flex items-center gap-4">
-          <UserButton 
-            afterSignOutUrl="/" 
-            appearance={{
-              baseTheme: resolvedTheme === "dark" ? dark : undefined,
-              elements: {
-                userButtonAvatarBox: "h-8 w-8 rounded-full",
-              }
-            }}
-          />
+          <AccountMenu />
         </div>
       </header>
       <main

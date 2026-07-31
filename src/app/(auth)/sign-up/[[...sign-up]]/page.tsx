@@ -1,32 +1,24 @@
-"use client";
-
-import { SignUp } from "@clerk/nextjs";
-import { dark } from "@clerk/themes";
-import { useTheme } from "next-themes";
-
+import { AuthForm } from "~/components/auth-form";
 import { AuthShell } from "~/components/auth-shell";
+import { sanitizeAuthCallbackUrl } from "~/lib/auth-redirect";
 
-export default function SignUpPage() {
-  const { resolvedTheme } = useTheme();
+type SignUpPageProps = {
+  searchParams: Promise<{ callbackURL?: string }>;
+};
+
+export default async function SignUpPage({
+  searchParams,
+}: SignUpPageProps) {
+  const params = await searchParams;
+  const callbackURL = sanitizeAuthCallbackUrl(params.callbackURL);
 
   return (
     <AuthShell
-      description="Create an account to enter the MVP workspace and begin the GitHub onboarding flow."
-      eyebrow="Phase 1"
-      title="Create your RepoDock workspace"
+      description="Create your RepoDock account, then connect GitHub and import your first repository."
+      eyebrow="Authentication / Sign up"
+      title="Open your workspace"
     >
-      <SignUp
-        appearance={{
-          baseTheme: resolvedTheme === "dark" ? dark : undefined,
-          elements: {
-            card: "shadow-none",
-            rootBox: "w-full",
-          },
-        }}
-        path="/sign-up"
-        routing="path"
-        signInUrl="/sign-in"
-      />
+      <AuthForm callbackURL={callbackURL} mode="sign-up" />
     </AuthShell>
   );
 }
