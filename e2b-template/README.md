@@ -48,3 +48,38 @@ E2B_SANDBOX_TEMPLATE="gabatools/devin-sandbox"
 
 Do not install `ripgrep` during every sandbox startup. It should stay baked into
 the E2B template so sandbox startup remains fast and reliable.
+
+## OpenCode Feasibility Template
+
+Phase 1 of the external coding-agent evaluation uses a separate template so the
+active RepoDock sandbox image remains unchanged:
+
+```bash
+E2B_API_KEY=e2b_your_key pnpm build:opencode-spike
+```
+
+This publishes:
+
+```txt
+gabatools/repodock-opencode-spike
+```
+
+The spike template adds the pinned `opencode-ai@1.18.4` runtime. Keep this
+version pinned so a template rebuild cannot silently change the OpenCode server
+contract. Provider credentials are injected only when a sandbox starts; they
+must never be baked into the template.
+
+Run the disposable end-to-end verification with:
+
+```bash
+E2B_API_KEY=e2b_your_key \
+OPENROUTER_API_KEY=your_openrouter_key \
+OPENROUTER_MODEL=your_model \
+pnpm verify:opencode-spike
+```
+
+The verification starts a password-protected OpenCode server, creates an
+isolated Git repository, asks the configured model to write one probe file,
+checks the exact content and Git status, and kills the sandbox in a `finally`
+block. Its OpenCode permission policy denies shell access and allows only the
+repository file operations required by the probe.

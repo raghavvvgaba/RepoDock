@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "tsx build.prod.ts"
+    "build": "tsx build.prod.ts",
+    "build:opencode-spike": "tsx build.opencode-spike.ts",
+    "verify:opencode-spike": "tsx verify.opencode-spike.ts"
   },
   "dependencies": {
     "dotenv": "^17.2.3",
