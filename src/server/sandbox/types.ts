@@ -195,8 +195,6 @@ export type SandboxAgentStatus =
   | "failed";
 
 export type SandboxAgentInput = {
-  issueNumber?: number;
-  issueTitle?: string;
   projectId: string;
   repoName: string;
   repoOwner: string;

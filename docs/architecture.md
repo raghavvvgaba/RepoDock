@@ -13,8 +13,6 @@ RepoDock's primary flow is now repository-to-workspace:
 5. The user starts or reconnects to the project's E2B sandbox.
 6. The user gives the agent a free-form task and reviews streamed activity, changed files, and the Git diff.
 
-GitHub issues remain available as a secondary workflow and reuse the same project sandbox.
-
 ## Frontend Structure
 
 Frontend screens live under [src/app](../src/app), especially:
@@ -33,9 +31,9 @@ Important screens:
 - [src/app/(app)/projects/[id]/page.tsx](../src/app/%28app%29/projects/%5Bid%5D/page.tsx)
   Primary project workspace with agent chat, sandbox controls, and change review.
 - [src/app/(app)/projects/[id]/issues/page.tsx](../src/app/%28app%29/projects/%5Bid%5D/issues/page.tsx)
-  Secondary GitHub issue browser.
+  Temporary compatibility redirect to the project workspace.
 - [src/app/(app)/projects/[id]/issues/[issueNumber]/page.tsx](../src/app/%28app%29/projects/%5Bid%5D/issues/%5BissueNumber%5D/page.tsx)
-  Issue workspace with shared sandbox and persistent issue chat.
+  Temporary compatibility redirect to the project workspace.
 
 Reusable UI lives under [src/components](../src/components).
 
@@ -51,25 +49,18 @@ Main route groups:
   Project listing and import creation.
 - [src/app/api/projects/[id]/sandbox](../src/app/api/projects/%5Bid%5D/sandbox)
   Project-level sandbox lifecycle, free-form agent, preview check, and Git changes routes.
-- [src/app/api/projects/[id]/issues/[issueNumber]/sandbox](../src/app/api/projects/%5Bid%5D/issues/%5BissueNumber%5D/sandbox)
-  Issue workspace routes for edit, diff, files, commands, and the issue-shaped sandbox lifecycle endpoints.
-
-Even though issue sandbox routes still exist, they now reuse the same project sandbox session.
-
 ## Server Modules
 
 Important backend modules:
 
 - [src/server/github](../src/server/github)
-  GitHub auth, import, issue fetching, and connection helpers.
+  GitHub auth, repository import, pull-request, and connection helpers.
 - [src/server/sandbox](../src/server/sandbox)
-  Sandbox provider contract, route helpers, registry logic, access checks, and AI edit integration.
-- [src/server/chat.ts](../src/server/chat.ts)
-  Persistent issue chat sessions and messages.
+  Sandbox provider contract, route helpers, registry logic, access checks, and agent tooling.
 - [src/server/workspace-chat.ts](../src/server/workspace-chat.ts)
   Persistent project workspace conversation and messages.
 - [src/server/ai](../src/server/ai)
-  AI provider abstraction and single-file edit generation.
+  AI provider abstraction used by the project-scoped agent.
 
 ## Sandbox Architecture
 
@@ -115,14 +106,9 @@ The primary project workspace uses:
 - `ProjectWorkspace`
 - `WorkspaceMessage`
 
-Each project has at most one workspace row. Messages persist the free-form project conversation independently of GitHub issues.
+Each project has at most one workspace row. Messages persist the free-form project conversation.
 
-The optional issue workspace continues to use:
-
-- `ChatSession`
-- `ChatMessage`
-
-The issue page loads saved messages on render, and the workspace uses them as the initial transcript. Runtime status/error copy is centralized in [src/lib/issue-chat-messages.ts](../src/lib/issue-chat-messages.ts).
+`ChatSession` and `ChatMessage` remain in the Prisma schema only as legacy tables during the code-first removal release. No application route reads or writes them. They will be dropped in a separate post-deployment migration.
 
 ## Documentation Boundaries
 

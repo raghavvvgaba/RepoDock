@@ -30,7 +30,7 @@ Relations:
 - `projects`
   Repositories imported by this user.
 - `chatSessions`
-  Issue chat sessions owned by this user.
+  Legacy relation retained temporarily for the post-deployment table removal.
 - `sandboxSessions`
   Project sandbox sessions owned by this user.
 - `projectWorkspaces`
@@ -59,7 +59,7 @@ Constraint:
 Relations:
 
 - `chatSessions`
-  Persistent issue chat sessions for this project.
+  Legacy relation retained temporarily for the post-deployment table removal.
 - `sandboxSessions`
   Sandbox registry rows for this project.
 - `workspace`
@@ -92,16 +92,16 @@ Index:
 - `@@index([workspaceId, createdAt])`
   Supports loading a workspace conversation in chronological order.
 
-Workspace messages are separate from optional issue messages so the primary project workflow does not require fake or sentinel issue numbers.
+Workspace messages are the durable conversation history for the project workspace.
 
-### `ChatSession`
+### Legacy `ChatSession`
 
-Represents the persistent chat thread for one project issue.
+Legacy issue-chat table retained temporarily during the code-first removal release.
 
 Important fields:
 
 - `projectId`
-  The project this issue chat belongs to.
+  The project the legacy chat belonged to.
 - `issueNumber`
   GitHub issue number for the thread.
 - `status`
@@ -112,13 +112,11 @@ Constraint:
 - `@@unique([projectId, issueNumber])`
   One stored chat session per project issue.
 
-Why it exists:
+No application route reads or writes this model. It will be removed only after the issue-free application release is deployed and the target database is checked for rows.
 
-- The issue workspace needs persistent history when the user refreshes or comes back later.
+### Legacy `ChatMessage`
 
-### `ChatMessage`
-
-Represents one stored message inside a `ChatSession`.
+Legacy message table associated with `ChatSession`.
 
 Important fields:
 
@@ -136,9 +134,7 @@ Index:
 - `@@index([sessionId, createdAt])`
   Helps fetch a session's messages in creation order.
 
-Why it exists:
-
-- The issue workspace needs durable transcript storage, not just client-side state.
+No application route reads or writes this model. The follow-up migration will drop this table before `ChatSession`.
 
 ### `SandboxSession`
 
@@ -172,7 +168,6 @@ Why it exists:
 
 - Sandbox ownership should survive server restarts.
 - The app should be able to restore a live E2B sandbox from persisted metadata.
-- Issue pages and project pages now share the same project sandbox.
 
 ## Design Notes
 

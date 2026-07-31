@@ -478,7 +478,6 @@ function logAgentModelResponse(
 ) {
   console.log("Sandbox agent model response:", {
     hasText: Boolean(response.text.trim()),
-    issueNumber: input.issueNumber,
     phase,
     projectId: input.projectId,
     step,
@@ -500,7 +499,6 @@ function logAgentToolResult(
   result: AgentToolExecutionResult,
 ) {
   console.log("Sandbox agent tool result:", {
-    issueNumber: input.issueNumber,
     latestObservationPreview:
       "latestObservation" in result
         ? previewText(result.latestObservation)
@@ -1020,9 +1018,6 @@ export async function runSandboxAgent(
 ): Promise<SandboxAgentInternalResult> {
   console.log("Sandbox agent started:", {
     instructionPreview: previewText(input.userInstruction, 240),
-    ...(typeof input.issueNumber === "number"
-      ? { issueNumber: input.issueNumber }
-      : {}),
     projectId: input.projectId,
     repoName: input.repoName,
     repoOwner: input.repoOwner,
@@ -1073,7 +1068,6 @@ export async function runSandboxAgent(
 
     if (toolTurn.status === "invalid_batch") {
       console.warn("Sandbox agent returned an invalid tool batch:", {
-        issueNumber: input.issueNumber,
         projectId: input.projectId,
         reason: toolTurn.reason,
         step: state.stepsUsed,
@@ -1082,7 +1076,6 @@ export async function runSandboxAgent(
 
       if (invalidBatchRetryUsed) {
         console.error("Sandbox agent invalid batch retry exhausted:", {
-          issueNumber: input.issueNumber,
           projectId: input.projectId,
           step: state.stepsUsed,
         });
@@ -1103,7 +1096,6 @@ export async function runSandboxAgent(
 
     if (awaitingInvalidBatchRecovery) {
       console.log("Sandbox agent invalid batch retry recovered:", {
-        issueNumber: input.issueNumber,
         projectId: input.projectId,
         step: state.stepsUsed,
       });

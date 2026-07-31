@@ -8,10 +8,9 @@ RepoDock is a developer-first cloud coding workspace where engineers and a codin
 - Imports a repository into the app as a project
 - Opens each imported repository as a persistent agent coding workspace
 - Starts or reconnects one shared E2B sandbox per project
-- Streams free-form agent work without requiring a GitHub issue
+- Streams free-form project-scoped agent work
 - Shows changed files, inspectable diffs, sandbox logs, and external previews
 - Persists project workspace conversations in Postgres through Prisma
-- Keeps GitHub issues available as an optional secondary workflow
 
 ## Main Flow
 
@@ -21,7 +20,6 @@ RepoDock is a developer-first cloud coding workspace where engineers and a codin
 4. Open `/projects/[id]` to enter the repository workspace.
 5. Start or reconnect to the project sandbox and give the agent a free-form task.
 6. Review streamed activity, changed files, the Git diff, and the external preview.
-7. Optionally browse GitHub issues at `/projects/[id]/issues`.
 
 ## Stack
 
@@ -38,7 +36,7 @@ RepoDock is a developer-first cloud coding workspace where engineers and a codin
 - [src/app](src/app)
   App Router pages, layouts, and API routes
 - [src/components](src/components)
-  UI components for project, issue, and sandbox workflows
+  UI components for project and sandbox workflows
 - [src/server](src/server)
   Server-side modules for GitHub, sandbox, chat, AI, and database access
 - [prisma/schema.prisma](prisma/schema.prisma)

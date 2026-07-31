@@ -46,8 +46,8 @@ function commandResult(
 }
 
 const submitInput = {
-  branchName: "tessera/issue-123",
-  commitMessage: "Issue #123: Fix the dashboard",
+  branchName: "repodock/update-dashboard",
+  commitMessage: "Fix the dashboard",
   installationToken: "ghs_secret_submit_token",
   repoName: "example",
   repoOwner: "tessera",
@@ -68,7 +68,7 @@ describe("submitSandboxChanges", () => {
     const result = await submitSandboxChanges(submitInput);
 
     expect(result).toEqual({
-      branchName: "tessera/issue-123",
+      branchName: "repodock/update-dashboard",
       message: "No sandbox changes to submit.",
       status: "noop",
     });
@@ -112,18 +112,18 @@ describe("submitSandboxChanges", () => {
     const logText = session.logs.join("");
 
     expect(result).toEqual({
-      branchName: "tessera/issue-123",
+      branchName: "repodock/update-dashboard",
       commitHash: "abc123",
       status: "committed",
     });
-    expect(commands).toContain("git switch -c 'tessera/issue-123'");
+    expect(commands).toContain("git switch -c 'repodock/update-dashboard'");
     expect(commands).toContain("git config user.name Tessera-bot");
     expect(commands).toContain(
       "git config user.email tessera-bot@users.noreply.github.com",
     );
     expect(commands).toContain("git add .");
     expect(commands).toContain(
-      "git commit -m 'Issue #123: Fix the dashboard'",
+      "git commit -m 'Fix the dashboard'",
     );
     expect(commands.some((command) => command.includes("ghs_secret_submit_token"))).toBe(
       true,
@@ -133,7 +133,7 @@ describe("submitSandboxChanges", () => {
       "https://x-access-token:ghs_secret_submit_token@github.com",
     );
     expect(logText).toContain(
-      "git push 'https://github.com/tessera/example.git' 'HEAD:tessera/issue-123'",
+      "git push 'https://github.com/tessera/example.git' 'HEAD:repodock/update-dashboard'",
     );
     expect(session.submitState).toBe("completed");
     expect(session.submitStage).toBe("done");

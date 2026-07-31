@@ -56,7 +56,7 @@ export default async function GithubOnboardingPage({
                 <p className="text-sm leading-relaxed text-muted-foreground">
                   This procedure links your authenticated Clerk session to a GitHub identity. 
                   Minimal connection metadata is stored locally; GitHub remains the 
-                  authoritative source for repository data and issue state.
+                  authoritative source for repository data and access state.
                 </p>
 
                 <div className="border border-border bg-muted/30 p-4">

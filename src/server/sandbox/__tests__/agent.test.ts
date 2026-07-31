@@ -137,8 +137,6 @@ const mockSession: SandboxSession = {
 };
 
 const baseInput: SandboxAgentInput = {
-  issueNumber: 16,
-  issueTitle: "Replace HealSync with Tessera",
   projectId: "project-test",
   repoName: "Portfolio",
   repoOwner: "raghavvvgaba",

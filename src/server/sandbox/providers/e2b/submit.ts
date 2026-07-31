@@ -173,7 +173,7 @@ async function prepareBranch(input: {
     const switchResult = await runSubmitCommand(input.session, {
       command: `git switch ${shellQuote(input.branchName)}`,
     });
-    assertSuccessfulCommand(switchResult, "Unable to switch to issue branch.");
+    assertSuccessfulCommand(switchResult, "Unable to switch to submission branch.");
     return;
   }
 
@@ -192,19 +192,19 @@ async function prepareBranch(input: {
       sensitiveValues: input.sensitiveValues,
       timeoutMs: 60_000,
     });
-    assertSuccessfulCommand(fetchResult, "Unable to fetch issue branch.");
+    assertSuccessfulCommand(fetchResult, "Unable to fetch submission branch.");
 
     const switchResult = await runSubmitCommand(input.session, {
       command: `git switch ${shellQuote(input.branchName)}`,
     });
-    assertSuccessfulCommand(switchResult, "Unable to switch to issue branch.");
+    assertSuccessfulCommand(switchResult, "Unable to switch to submission branch.");
     return;
   }
 
   const createResult = await runSubmitCommand(input.session, {
     command: `git switch -c ${shellQuote(input.branchName)}`,
   });
-  assertSuccessfulCommand(createResult, "Unable to create issue branch.");
+  assertSuccessfulCommand(createResult, "Unable to create submission branch.");
 }
 
 export async function setSandboxSubmitProgress(
@@ -340,7 +340,7 @@ export async function submitSandboxChanges(
       statusMessage: "Pushing branch to GitHub",
       timeoutMs: 120_000,
     });
-    assertSuccessfulCommand(pushResult, "Unable to push issue branch.");
+    assertSuccessfulCommand(pushResult, "Unable to push submission branch.");
 
     const commitHashResult = await runSubmitCommand(session, {
       command: "git rev-parse --short HEAD",

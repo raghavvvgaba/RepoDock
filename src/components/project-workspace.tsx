@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { ChevronLeft, ExternalLink, Github, ListTodo } from "lucide-react";
+import { ChevronLeft, ExternalLink, Github } from "lucide-react";
 
 import { ProjectChatWorkspace } from "~/components/project-chat-workspace";
 import { SandboxStatusPanel } from "~/components/sandbox-status-panel";
@@ -48,12 +48,6 @@ export function ProjectWorkspace({
               Project workspace
             </p>
           </div>
-          <Button asChild className="h-8 rounded-none px-2 text-[10px]" variant="ghost">
-            <Link href={`/projects/${project.id}/issues`}>
-              <ListTodo className="mr-1 h-3.5 w-3.5" />
-              Issues
-            </Link>
-          </Button>
           <Button asChild className="h-8 w-8 rounded-none p-0" variant="ghost">
             <a
               href={`https://github.com/${project.repoOwner}/${project.repoName}`}

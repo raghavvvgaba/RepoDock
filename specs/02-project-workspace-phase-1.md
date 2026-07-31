@@ -13,29 +13,26 @@ An authenticated engineer can:
 1. import a GitHub repository
 2. open its project workspace at `/projects/[id]`
 3. start or reconnect to the project's E2B sandbox
-4. give the agent a free-form coding task without selecting an issue
+4. give the agent a free-form coding task
 5. observe streamed progress and a final response
 6. refresh and continue the durable project conversation
 7. inspect changed files and a textual Git diff
 8. open the sandbox preview externally
 9. stop the sandbox deliberately
 
-GitHub issues remain available as an optional secondary workflow at `/projects/[id]/issues`.
-
 ## Implemented Architecture
 
 ### Workspace and persistence
 
 - Each imported project has at most one `ProjectWorkspace` and one active `SandboxSession`.
-- `WorkspaceMessage` stores the durable project conversation independently of issue chat.
+- `WorkspaceMessage` stores the durable project conversation.
 - Existing projects lazily create their workspace row; new imports create it with the project.
 - Ownership is validated from the authenticated user through the project on the server.
 
 ### Agent execution
 
 - `POST /api/projects/[id]/sandbox/agent` accepts a live `sessionId` and free-form `instruction`.
-- Project runs include repository context without fabricated issue context.
-- Optional issue runs use the same agent with issue number and title supplied as additional context.
+- Agent runs include repository and project context.
 - The client handles `progress`, `final`, and `error` SSE events through shared agent-chat helpers.
 - User instructions and final completed, blocked, or failed responses are durable; progress updates are transient.
 
@@ -69,4 +66,3 @@ The Prisma migration `20260722090000_add_project_workspaces` must be applied to 
 - model selection and advanced agent settings
 - team collaboration
 - replacement of the current custom agent runtime
-- removal of the optional issue workflow

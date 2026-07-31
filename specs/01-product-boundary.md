@@ -77,7 +77,7 @@ The fork may retain and evolve useful parts of the original application, includi
 - cloud sandbox provisioning and lifecycle management
 - repository cloning and environment setup
 - application previews
-- issue and pull-request integrations
+- pull-request integration
 - chat/session persistence
 - commit, push, and pull-request infrastructure
 

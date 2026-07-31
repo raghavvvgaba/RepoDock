@@ -1,19 +1,8 @@
 import { redirect } from "next/navigation";
 
 import { type AIChatMessage } from "~/components/ui/ai-chat";
-import { buildIssueChatStatusMessage } from "~/lib/issue-chat-messages";
-import {
-  getIssueChatMessages,
-  getOrCreateIssueChatSession,
-} from "~/server/chat";
 import { db } from "~/server/db";
 import { getGithubConnectionStatus } from "~/server/github/connection";
-import {
-  fetchProjectIssue,
-  fetchProjectOpenIssues,
-  type ProjectIssueResult,
-  type ProjectIssuesResult,
-} from "~/server/github/issues";
 import {
   fetchGithubViewerLogin,
   fetchImportRepositories,
@@ -67,11 +56,6 @@ const newProjectSuccessMessages: Record<string, string> = {
 
 
 type GithubOnboardingPageSearchParams = {
-  error?: string;
-  success?: string;
-};
-
-type IssueWorkspaceSearchState = {
   error?: string;
   success?: string;
 };
@@ -140,25 +124,6 @@ export async function getGithubOnboardingPageData(
 }
 
 
-export async function getProjectIssuesPageData(userId: string, projectId: string) {
-  const project = await getOwnedProject(projectId, userId);
-
-  if (!project) {
-    return { notFound: true as const };
-  }
-
-  const issuesResult = await fetchProjectOpenIssues(
-    project.repoOwner,
-    project.repoName,
-  );
-
-  return {
-    issuesResult,
-    notFound: false as const,
-    project,
-  };
-}
-
 export async function getProjectWorkspacePageData(
   userId: string,
   projectId: string,
@@ -176,60 +141,6 @@ export async function getProjectWorkspacePageData(
   const messages: AIChatMessage[] = await getWorkspaceMessages(workspace.id);
 
   return {
-    messages,
-    notFound: false as const,
-    project,
-  };
-}
-
-export async function getIssueWorkspacePageData(
-  userId: string,
-  projectId: string,
-  issueNumber: number,
-  searchState: IssueWorkspaceSearchState,
-) {
-  if (Number.isNaN(issueNumber)) {
-    return { notFound: true as const };
-  }
-
-  const project = await getOwnedProject(projectId, userId);
-
-  if (!project) {
-    return { notFound: true as const };
-  }
-
-  const issueResult = await fetchProjectIssue(
-    project.repoOwner,
-    project.repoName,
-    issueNumber,
-  );
-
-  if (issueResult.status === "not_found") {
-    return { notFound: true as const };
-  }
-
-  const issueTitle =
-    issueResult.status === "ok"
-      ? issueResult.issue.title
-      : `Issue #${issueNumber}`;
-  const chatSession = await getOrCreateIssueChatSession({
-    issueNumber,
-    projectId: project.id,
-    title: issueTitle,
-    userId: project.userId,
-  });
-  const persistedMessages = await getIssueChatMessages(chatSession.id);
-  const messages: AIChatMessage[] = [...persistedMessages];
-  const statusMessage = buildIssueChatStatusMessage(searchState);
-
-  if (statusMessage) {
-    messages.unshift(statusMessage);
-  }
-
-  return {
-    accessBlocked: issueResult.status !== "ok",
-    issueResult,
-    issueTitle,
     messages,
     notFound: false as const,
     project,

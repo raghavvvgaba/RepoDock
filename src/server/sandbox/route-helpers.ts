@@ -6,19 +6,8 @@ import { NextResponse } from "next/server";
 import { getOwnedProject } from "~/server/projects";
 import { canAccessProjectSandbox } from "~/server/sandbox/ownership";
 
-export type IssueSandboxRouteContext = {
-  params: Promise<{ id: string; issueNumber: string }>;
-};
-
 export type ProjectSandboxRouteContext = {
   params: Promise<{ id: string }>;
-};
-
-export type OwnedIssueSandboxAccess = {
-  issueNumber: number;
-  project: NonNullable<Awaited<ReturnType<typeof getOwnedProject>>>;
-  request: Request;
-  userId: string;
 };
 
 export type OwnedProjectSandboxAccess = {
@@ -47,36 +36,6 @@ export function sandboxToolError(error: unknown, fallback: string) {
   ]);
 
   return sandboxError(message, badRequestErrors.has(message) ? 400 : 500);
-}
-
-export async function getOwnedIssueProject(
-  request: Request,
-  context: IssueSandboxRouteContext,
-) {
-  const { userId } = await auth();
-
-  if (!userId) {
-    return {
-      response: sandboxError("unauthenticated", 401),
-    };
-  }
-
-  const { id, issueNumber: rawIssueNumber } = await context.params;
-  const issueNumber = Number(rawIssueNumber);
-  const project = await getOwnedProject(id, userId);
-
-  if (!project || Number.isNaN(issueNumber)) {
-    return {
-      response: sandboxError("project_not_found", 404),
-    };
-  }
-
-  return {
-    issueNumber,
-    project,
-    request,
-    userId,
-  };
 }
 
 export async function getOwnedSandboxProject(
@@ -171,31 +130,6 @@ export function readRequiredStringValue(
   return typeof value === "string" ? value : null;
 }
 
-export async function verifyIssueSandboxAccess(input: {
-  projectId: string;
-  sessionId: string;
-  userId: string;
-}) {
-  return canAccessProjectSandbox(input.sessionId, {
-    projectId: input.projectId,
-    userId: input.userId,
-  });
-}
-
-export async function withOwnedIssueSandboxRoute(
-  request: Request,
-  context: IssueSandboxRouteContext,
-  handler: (access: OwnedIssueSandboxAccess) => Promise<Response> | Response,
-) {
-  const access = await getOwnedIssueProject(request, context);
-
-  if ("response" in access) {
-    return access.response;
-  }
-
-  return handler(access as OwnedIssueSandboxAccess);
-}
-
 export async function withOwnedProjectSandboxRoute(
   request: Request,
   context: ProjectSandboxRouteContext,
@@ -221,27 +155,6 @@ export async function validateProjectSandboxSession(
   if (
     !(await canAccessProjectSandbox(sessionId, {
       projectId: access.project.id,
-      userId: access.userId,
-    }))
-  ) {
-    return sandboxError("session_not_found", 404);
-  }
-
-  return null;
-}
-
-export async function validateIssueSandboxSession(
-  access: OwnedIssueSandboxAccess,
-  sessionId: string | null,
-) {
-  if (!sessionId) {
-    return sandboxError("missing_session_id");
-  }
-
-  if (
-    !(await verifyIssueSandboxAccess({
-      projectId: access.project.id,
-      sessionId,
       userId: access.userId,
     }))
   ) {
