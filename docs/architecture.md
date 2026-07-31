@@ -108,8 +108,6 @@ The primary project workspace uses:
 
 Each project has at most one workspace row. Messages persist the free-form project conversation.
 
-`ChatSession` and `ChatMessage` remain in the Prisma schema only as legacy tables during the code-first removal release. No application route reads or writes them. They will be dropped in a separate post-deployment migration.
-
 ## Documentation Boundaries
 
 Use the docs like this:

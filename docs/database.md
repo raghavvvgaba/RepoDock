@@ -29,8 +29,6 @@ Relations:
 
 - `projects`
   Repositories imported by this user.
-- `chatSessions`
-  Legacy relation retained temporarily for the post-deployment table removal.
 - `sandboxSessions`
   Project sandbox sessions owned by this user.
 - `projectWorkspaces`
@@ -58,8 +56,6 @@ Constraint:
 
 Relations:
 
-- `chatSessions`
-  Legacy relation retained temporarily for the post-deployment table removal.
 - `sandboxSessions`
   Sandbox registry rows for this project.
 - `workspace`
@@ -93,48 +89,6 @@ Index:
   Supports loading a workspace conversation in chronological order.
 
 Workspace messages are the durable conversation history for the project workspace.
-
-### Legacy `ChatSession`
-
-Legacy issue-chat table retained temporarily during the code-first removal release.
-
-Important fields:
-
-- `projectId`
-  The project the legacy chat belonged to.
-- `issueNumber`
-  GitHub issue number for the thread.
-- `status`
-  Current logical status of the chat session.
-
-Constraint:
-
-- `@@unique([projectId, issueNumber])`
-  One stored chat session per project issue.
-
-No application route reads or writes this model. It will be removed only after the issue-free application release is deployed and the target database is checked for rows.
-
-### Legacy `ChatMessage`
-
-Legacy message table associated with `ChatSession`.
-
-Important fields:
-
-- `sessionId`
-  Parent chat session.
-- `role`
-  Message role such as user, assistant, or system.
-- `body`
-  Stored message text.
-- `tone`
-  Optional metadata for UI rendering.
-
-Index:
-
-- `@@index([sessionId, createdAt])`
-  Helps fetch a session's messages in creation order.
-
-No application route reads or writes this model. The follow-up migration will drop this table before `ChatSession`.
 
 ### `SandboxSession`
 
